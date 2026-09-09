@@ -17,7 +17,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 import GoogleIcon from '@mui/icons-material/Google'
 import AuthLayout from '../components/AuthLayout'
-import { signupWithEmail } from '../lib/auth'
+import { signupWithEmail, loginWithGoogle } from '../lib/auth'
 import { useAuth } from '../contexts/AuthContext'
 
 export default function SignupPage() {
@@ -30,6 +30,7 @@ export default function SignupPage() {
   const [acceptedTerms, setAcceptedTerms] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
 
@@ -38,6 +39,17 @@ export default function SignupPage() {
   useEffect(() => {
     if (session) navigate('/inicio')
   }, [session, navigate])
+
+  const handleGoogleSignup = async () => {
+    setError(null)
+    setGoogleLoading(true)
+    try {
+      await loginWithGoogle()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Não foi possível continuar com o Google.')
+      setGoogleLoading(false)
+    }
+  }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -175,9 +187,10 @@ export default function SignupPage() {
           color="secondary"
           startIcon={<GoogleIcon />}
           fullWidth
-          disabled
+          disabled={googleLoading}
+          onClick={handleGoogleSignup}
         >
-          Continuar com Google
+          {googleLoading ? 'Redirecionando...' : 'Continuar com Google'}
         </Button>
 
         <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', pt: 1 }}>
