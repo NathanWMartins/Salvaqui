@@ -94,7 +94,7 @@ export default function InstallFab() {
         onClose={() => setOpen(false)}
         maxWidth="xs"
         fullWidth
-        slotProps={{ paper: { sx: { borderRadius: 4, overflow: 'visible' } } }}
+        slotProps={{ paper: { sx: { borderRadius: 2, overflow: 'visible' } } }}
       >
         <IconButton
           onClick={() => setOpen(false)}
@@ -138,8 +138,13 @@ export default function InstallFab() {
           </Stack>
         </DialogContent>
 
-        <DialogActions sx={{ px: 3, pb: 3, pt: 1 }}>
-          <Button onClick={() => setOpen(false)} color="secondary" fullWidth={!canInstall}>
+        <DialogActions sx={{ px: 3, pb: 3, pt: 1, gap: 1 }}>
+          <Button
+            onClick={() => setOpen(false)}
+            color="secondary"
+            fullWidth={!canInstall}
+            sx={{ flexShrink: 0, whiteSpace: 'nowrap' }}
+          >
             {canInstall ? 'Agora não' : 'Entendi'}
           </Button>
           {canInstall && (

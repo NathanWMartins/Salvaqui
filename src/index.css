@@ -8,6 +8,14 @@ body,
   height: 100%;
 }
 
+html,
+body {
+  /* Evita rolagem horizontal quando algum elemento decorativo (vídeo, blur,
+     mascote animado) sangra levemente pra fora da viewport. */
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   margin: 0;
 }

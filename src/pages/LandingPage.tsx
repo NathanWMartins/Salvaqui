@@ -169,13 +169,25 @@ export default function LandingPage() {
               <Typography variant="h6" sx={{ fontWeight: 800 }}>
                 salvaqui
               </Typography>
-              <Chip label="IA Contextual" size="small" color="primary" variant="outlined" />
+              <Chip
+                label="IA Contextual"
+                size="small"
+                color="primary"
+                variant="outlined"
+                sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
+              />
             </Stack>
             <Stack direction="row" spacing={1.5}>
               <Button component={RouterLink} to="/login" sx={{ color: "#ff8146" }}>
                 Entrar
               </Button>
-              <Button component={RouterLink} to="/signup" variant="contained" disableElevation sx={{ backgroundColor: "#ff8146" }}>
+              <Button
+                component={RouterLink}
+                to="/signup"
+                variant="contained"
+                disableElevation
+                sx={{ backgroundColor: "#ff8146", display: { xs: 'none', sm: 'inline-flex' } }}
+              >
                 Experimente Grátis
               </Button>
             </Stack>
@@ -203,13 +215,13 @@ export default function LandingPage() {
           playsInline
           sx={{
             position: 'absolute',
-            top: '50%',
-            right: 100,
-            transform: 'translateY(-50%)',
-            width: '70%',
-            height: '70%',
+            top: { xs: 0, md: '50%' },
+            right: { xs: -12, md: 100 },
+            transform: { xs: 'none', md: 'translateY(-50%)' },
+            width: { xs: '78%', md: '70%' },
+            height: { xs: '48%', md: '70%' },
             objectFit: 'cover',
-            objectPosition: { xs: 'center', md: 'right center' },
+            objectPosition: 'right center',
             zIndex: 0,
             opacity: 0,
             animation: `${heroVideoFadeIn} 1s ease-out forwards`,
@@ -218,7 +230,9 @@ export default function LandingPage() {
           <source src="/SawVideo.mp4" type="video/mp4" />
         </Box>
 
-        {/* Véu garantindo contraste do texto por cima do vídeo */}
+        {/* Véu garantindo contraste do texto por cima do vídeo — no mobile
+            deixa a parte de cima (onde o vídeo está) bem mais visível, e só
+            escurece perto do texto embaixo. */}
         <Box
           sx={{
             position: 'absolute',
@@ -226,7 +240,7 @@ export default function LandingPage() {
             zIndex: 1,
             pointerEvents: 'none',
             background: {
-              xs: 'linear-gradient(180deg, rgba(251,249,246,0.92) 0%, rgba(251,249,246,0.8) 55%, rgba(251,249,246,0.96) 100%)',
+              xs: 'linear-gradient(180deg, rgba(251,249,246,0.1) 0%, rgba(251,249,246,0.25) 38%, rgba(251,249,246,0.94) 56%, rgba(251,249,246,0.97) 100%)',
               md: 'linear-gradient(90deg, rgba(251,249,246,1) 0%, rgba(251,249,246,0.88) 42%, rgba(251,249,246,0) 68%)',
             },
           }}
@@ -272,6 +286,7 @@ export default function LandingPage() {
               maxWidth: { xs: '100%', md: 620 },
               alignItems: { xs: 'center', md: 'flex-start' },
               textAlign: { xs: 'center', md: 'left' },
+              mt: { xs: 22, md: 0 },
             }}
           >
             <Typography variant="h2" sx={{ fontSize: { xs: '2.2rem', md: '2.8rem' } }}>
@@ -297,16 +312,26 @@ export default function LandingPage() {
               variant="outlined"
               sx={{ p: 1.5, borderRadius: 4, width: '100%', maxWidth: 560, bgcolor: 'background.paper' }}
             >
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
                 <TextField
                   fullWidth
                   size="small"
                   placeholder="https://instagram.com/p/floripa-trilha"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  sx={{ '& fieldset': { border: 'none' } }}
+                  sx={{ minWidth: 0, '& fieldset': { border: 'none' } }}
                 />
-                <Button variant="contained" disableElevation endIcon={<ArrowForwardIcon />} sx={{ backgroundColor: "#ff8146" }}>
+                <Button
+                  variant="contained"
+                  disableElevation
+                  endIcon={<ArrowForwardIcon />}
+                  sx={{
+                    backgroundColor: "#ff8146",
+                    flexShrink: 0,
+                    px: { xs: 1.5, sm: 2.5 },
+                    whiteSpace: 'nowrap',
+                  }}
+                >
                   Analisar
                 </Button>
               </Stack>

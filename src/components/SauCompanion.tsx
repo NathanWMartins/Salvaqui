@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Box, Paper, Stack, Typography } from '@mui/material'
+import { Box, Paper, Typography } from '@mui/material'
 import { keyframes } from '@emotion/react'
 
 type SectionMessage = {
@@ -43,7 +43,7 @@ const hover = keyframes`
 // Posições horizontais dos dois lados. Sempre usamos `left` (nunca `right`)
 // pra permitir uma transição de CSS suave entre os pontos.
 const LEFT_X = { xs: '12px', sm: '5%', md: '6%' }
-const RIGHT_X = { xs: 'calc(100% - 80px)', sm: 'calc(100% - 300px)', md: 'calc(100% - 300px)' }
+const RIGHT_X = { xs: 'calc(100% - 110px)', sm: 'calc(100% - 300px)', md: 'calc(100% - 300px)' }
 
 const MASCOT_SIZE = 65
 const TOP_PAD = 90 // distância mínima do topo da seção
@@ -216,30 +216,28 @@ export default function SauCompanion() {
                     ? `top ${FLIGHT_MS}ms ${FLIGHT_EASE}, left ${FLIGHT_MS}ms ${FLIGHT_EASE}, opacity 0.5s ease`
                     : 'top 0.1s linear, opacity 0.3s ease',
                 zIndex: 5,
-                display: 'flex',
-                alignItems: 'flex-end',
-                gap: 1.5,
                 pointerEvents: 'none',
                 '@media (prefers-reduced-motion: reduce)': {
                     transition: 'opacity 0.3s ease',
                 },
             }}
         >
-            <Stack
-                direction="column"
-                sx={{ gap: 2, alignItems: side === 'left' ? 'flex-start' : 'flex-end' }}
-            >
+            {/* Wrapper com position:relative só do tamanho do mascote — o
+                balão fica "flutuando" (absolute) por cima dele, então o
+                tamanho do balão nunca empurra o mascote pra fora da tela,
+                mesmo quando o balão está invisível (opacity:0) no mobile. */}
+            <Box sx={{ position: 'relative', width: { xs: 44, sm: MASCOT_SIZE } }}>
                 <Paper
                     key={`balao-${flightKey}`}
                     elevation={3}
                     sx={{
-                        position: 'relative',
+                        position: 'absolute',
+                        bottom: 'calc(100% + 16px)',
+                        ...(side === 'left' ? { left: 40 } : { right: 40 }),
                         px: 2,
                         py: 1.25,
                         borderRadius: 3,
-                        maxWidth: 160,
-                        ml: side === 'left' ? 5 : 0,
-                        mr: side === 'right' ? 5 : 0,
+                        width: 160,
                         opacity: {
                             xs: flying || !balloonOpen ? 0 : 1,
                             sm: flying ? 0 : 1,
@@ -280,10 +278,8 @@ export default function SauCompanion() {
                         }
                     }}
                     sx={{
-                        flexShrink: 0,
                         pointerEvents: 'auto',
                         cursor: { xs: flying ? 'default' : 'pointer', sm: 'default' },
-                        width: { xs: 44, sm: MASCOT_SIZE },
                         animation: flying
                             ? `${flightDir === 'right' ? flyRight : flyLeft} ${FLIGHT_MS}ms ease-in-out`
                             : `${hover} 3s ease-in-out infinite`,
@@ -299,7 +295,7 @@ export default function SauCompanion() {
                         sx={{ width: '100%', height: 'auto', display: 'block' }}
                     />
                 </Box>
-            </Stack>
+            </Box>
         </Box>
     )
 }
