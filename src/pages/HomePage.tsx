@@ -14,6 +14,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
+import { alpha } from '@mui/material/styles'
 import { useNavigate } from 'react-router-dom'
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined'
 import AddLinkOutlinedIcon from '@mui/icons-material/AddLinkOutlined'
@@ -26,6 +27,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { addLocalItem, getLocalItems, isOnboarded, markOnboarded } from '../lib/localItems'
 import OnboardingIntro from '../components/OnboardingIntro'
 import EmptyInbox from '../components/EmptyInbox'
+import ThemeToggleButton from '../components/ThemeToggleButton'
 
 const filters = ['Todos', 'Comprar', 'Conhecer', 'Fazer', 'Assistir', 'Aprender']
 
@@ -91,7 +93,7 @@ export default function HomePage() {
           position: 'sticky',
           top: 0,
           zIndex: 10,
-          bgcolor: 'rgba(251,249,246,0.9)',
+          bgcolor: (theme) => alpha(theme.palette.background.default, 0.9),
           backdropFilter: 'blur(8px)',
           borderBottom: '1px solid',
           borderColor: 'divider',
@@ -120,6 +122,8 @@ export default function HomePage() {
                 },
               }}
             />
+
+            <ThemeToggleButton />
 
             <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
               <Avatar sx={{ width: 34, height: 34, bgcolor: 'primary.main', fontSize: '0.9rem' }}>

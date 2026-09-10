@@ -15,7 +15,10 @@ import {
   Snackbar,
   Alert,
 } from '@mui/material'
+import { alpha } from '@mui/material/styles'
 import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
+import ThemeToggleButton from '../components/ThemeToggleButton'
+import { useThemeMode } from '../contexts/ThemeModeContext'
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined'
@@ -132,6 +135,7 @@ const introFadeIn = keyframes`
 `
 
 export default function LandingPage() {
+  const { mode } = useThemeMode()
   const [url, setUrl] = useState('')
   const { canInstall, installed, promptInstall } = usePWAInstall()
   const [installMessage, setInstallMessage] = useState<string | null>(null)
@@ -146,7 +150,7 @@ export default function LandingPage() {
   }
 
   return (
-    <Box sx={{ position: 'relative', backgroundColor: '#fbf9f6' }}>
+    <Box sx={{ position: 'relative', bgcolor: 'background.default' }}>
       {/* Header */}
       <Box
         component="header"
@@ -154,7 +158,7 @@ export default function LandingPage() {
           position: 'sticky',
           top: 0,
           zIndex: 10,
-          bgcolor: '#fbf9f6',
+          bgcolor: (theme) => alpha(theme.palette.background.default, 0.85),
           backdropFilter: 'blur(8px)',
           borderBottom: '1px solid',
           borderColor: 'divider',
@@ -177,8 +181,9 @@ export default function LandingPage() {
                 sx={{ display: { xs: 'none', sm: 'inline-flex' } }}
               />
             </Stack>
-            <Stack direction="row" spacing={1.5}>
-              <Button component={RouterLink} to="/login" sx={{ color: "#ff8146" }}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+              <ThemeToggleButton size="small" sx={{ color: 'text.primary' }} />
+              <Button component={RouterLink} to="/login" sx={{ color: 'primary.main' }}>
                 Entrar
               </Button>
               <Button
@@ -186,7 +191,7 @@ export default function LandingPage() {
                 to="/signup"
                 variant="contained"
                 disableElevation
-                sx={{ backgroundColor: "#ff8146", display: { xs: 'none', sm: 'inline-flex' } }}
+                sx={{ backgroundColor: 'primary.main', display: { xs: 'none', sm: 'inline-flex' } }}
               >
                 Experimente Grátis
               </Button>
@@ -206,8 +211,11 @@ export default function LandingPage() {
           alignItems: 'center',
         }}
       >
-        {/* Vídeo do Sau em tela cheia, ao fundo */}
+        {/* Vídeo do Sau em tela cheia, ao fundo — troca pra versão escura
+            quando o modo escuro está ativo. A key força o <video> a
+            remontar (e recarregar a fonte nova) ao trocar de tema. */}
         <Box
+          key={mode}
           component="video"
           autoPlay
           loop
@@ -227,22 +235,25 @@ export default function LandingPage() {
             animation: `${heroVideoFadeIn} 1s ease-out forwards`,
           }}
         >
-          <source src="/SawVideo.mp4" type="video/mp4" />
+          <source src={mode === 'dark' ? '/SawVideoDark.mp4' : '/SawVideo.mp4'} type="video/mp4" />
         </Box>
 
         {/* Véu garantindo contraste do texto por cima do vídeo — no mobile
             deixa a parte de cima (onde o vídeo está) bem mais visível, e só
             escurece perto do texto embaixo. */}
         <Box
-          sx={{
-            position: 'absolute',
-            inset: 0,
-            zIndex: 1,
-            pointerEvents: 'none',
-            background: {
-              xs: 'linear-gradient(180deg, rgba(251,249,246,0.1) 0%, rgba(251,249,246,0.25) 38%, rgba(251,249,246,0.94) 56%, rgba(251,249,246,0.97) 100%)',
-              md: 'linear-gradient(90deg, rgba(251,249,246,1) 0%, rgba(251,249,246,0.88) 42%, rgba(251,249,246,0) 68%)',
-            },
+          sx={(theme) => {
+            const bg = theme.palette.background.default
+            return {
+              position: 'absolute',
+              inset: 0,
+              zIndex: 1,
+              pointerEvents: 'none',
+              background: {
+                xs: `linear-gradient(180deg, ${alpha(bg, 0.1)} 0%, ${alpha(bg, 0.25)} 38%, ${alpha(bg, 0.94)} 56%, ${alpha(bg, 0.97)} 100%)`,
+                md: `linear-gradient(90deg, ${alpha(bg, 1)} 0%, ${alpha(bg, 0.88)} 42%, ${alpha(bg, 0)} 68%)`,
+              },
+            }
           }}
         />
 
@@ -326,7 +337,7 @@ export default function LandingPage() {
                   disableElevation
                   endIcon={<ArrowForwardIcon />}
                   sx={{
-                    backgroundColor: "#ff8146",
+                    backgroundColor: 'primary.main',
                     flexShrink: 0,
                     px: { xs: 1.5, sm: 2.5 },
                     whiteSpace: 'nowrap',
@@ -346,7 +357,8 @@ export default function LandingPage() {
         sx={{
           position: 'relative',
           overflow: 'hidden',
-          background: 'linear-gradient(180deg, #FBF9F6 0%, #ff8146 100%)',
+          background: (theme) =>
+            `linear-gradient(180deg, ${theme.palette.background.default} 0%, ${theme.palette.primary.main} 100%)`,
           // background: '#ff8146',
           color: 'white',
           py: { xs: 5, md: 7 },
@@ -356,10 +368,10 @@ export default function LandingPage() {
           <Stack spacing={{ xs: 3, md: 4 }}>
             {/* Header */}
             <Stack spacing={1.5} sx={{ alignItems: 'center', textAlign: 'center' }}>
-              <Typography variant="h3" sx={{ fontSize: { xs: '1.7rem', md: '2.3rem' }, color: 'rgba(44, 44, 44, 0.85)' }}>
+              <Typography variant="h3" sx={{ fontSize: { xs: '1.7rem', md: '2.3rem' }, color: 'text.primary' }}>
                 O momento em que <br /> tudo se conecta.
               </Typography>
-              <Typography sx={{ color: 'rgba(44, 44, 44, 0.85)', maxWidth: 480 }}>
+              <Typography sx={{ maxWidth: 480, color: 'text.secondary' }}>
                 Quatro conteúdos salvos em dias diferentes. <br />A IA percebe que, juntos, eles contam
                 uma história.
               </Typography>

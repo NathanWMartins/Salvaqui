@@ -1,27 +1,8 @@
-import { createTheme } from '@mui/material/styles'
+import { createTheme, type PaletteMode, type ThemeOptions } from '@mui/material/styles'
 
-// Paleta provisória: fundo neutro claro, acento em âmbar/coral.
-export const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#E85D3D',
-      dark: '#C44B2F',
-      light: '#FF8F6B',
-      contrastText: '#FFFFFF',
-    },
-    secondary: {
-      main: '#1F2937',
-    },
-    background: {
-      default: '#FBF9F6',
-      paper: '#FFFFFF',
-    },
-    text: {
-      primary: '#1A1A1A',
-      secondary: '#5C5C5C',
-    },
-  },
+// Configurações compartilhadas pelos dois modos (forma, tipografia,
+// overrides de componente) — só a paleta muda entre claro/escuro.
+const shared: ThemeOptions = {
   shape: {
     borderRadius: 14,
   },
@@ -53,4 +34,54 @@ export const theme = createTheme({
       },
     },
   },
-})
+}
+
+const lightPalette: ThemeOptions['palette'] = {
+  mode: 'light',
+  primary: {
+    main: '#E85D3D',
+    dark: '#C44B2F',
+    light: '#FF8F6B',
+    contrastText: '#FFFFFF',
+  },
+  secondary: {
+    main: '#1F2937',
+  },
+  background: {
+    default: '#FBF9F6',
+    paper: '#FFFFFF',
+  },
+  text: {
+    primary: '#1A1A1A',
+    secondary: '#5C5C5C',
+  },
+}
+
+const darkPalette: ThemeOptions['palette'] = {
+  mode: 'dark',
+  primary: {
+    main: '#FF7A50',
+    dark: '#E85D3D',
+    light: '#FFB199',
+    contrastText: '#1A1310',
+  },
+  secondary: {
+    main: '#CBD5E1',
+  },
+  background: {
+    default: '#17130F',
+    paper: '#211C17',
+  },
+  text: {
+    primary: '#F5F1EC',
+    secondary: '#B8AFA6',
+  },
+  divider: 'rgba(245,241,236,0.12)',
+}
+
+export function getTheme(mode: PaletteMode) {
+  return createTheme({
+    ...shared,
+    palette: mode === 'dark' ? darkPalette : lightPalette,
+  })
+}

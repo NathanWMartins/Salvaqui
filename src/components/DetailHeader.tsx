@@ -1,15 +1,15 @@
 import { Box, Container, IconButton, Stack, Typography } from '@mui/material'
+import { alpha } from '@mui/material/styles'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Link as RouterLink, useNavigate } from 'react-router-dom'
+import ThemeToggleButton from './ThemeToggleButton'
 
 type DetailHeaderProps = {
   title: string
   backTo?: string
 }
 
-// Cabeçalho fixo simples pras telas internas (detalhe do item, conexão,
-// configurações): seta de voltar + título + logo. A Home tem seu próprio
-// header (com busca e menu), então não reaproveita este aqui.
+
 export default function DetailHeader({ title, backTo }: DetailHeaderProps) {
   const navigate = useNavigate()
 
@@ -20,7 +20,7 @@ export default function DetailHeader({ title, backTo }: DetailHeaderProps) {
         position: 'sticky',
         top: 0,
         zIndex: 10,
-        bgcolor: 'rgba(251,249,246,0.9)',
+        bgcolor: (theme) => alpha(theme.palette.background.default, 0.9),
         backdropFilter: 'blur(8px)',
         borderBottom: '1px solid',
         borderColor: 'divider',
@@ -45,6 +45,7 @@ export default function DetailHeader({ title, backTo }: DetailHeaderProps) {
           >
             salvaqui
           </Typography>
+          <ThemeToggleButton size="small" />
         </Stack>
       </Container>
     </Box>

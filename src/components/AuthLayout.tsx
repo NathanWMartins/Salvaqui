@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Box, Container, Paper, Stack, Typography } from '@mui/material'
 import { Link as RouterLink } from 'react-router-dom'
+import ThemeToggleButton from './ThemeToggleButton'
 
 type AuthLayoutProps = {
   children: ReactNode
@@ -62,12 +63,17 @@ export default function AuthLayout({ children, title, subtitle, mascotMessage }:
       <Box
         sx={{
           flex: 1,
+          position: 'relative',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           bgcolor: 'background.default',
         }}
       >
+        <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+          <ThemeToggleButton size="small" />
+        </Box>
+
         <Container maxWidth="xs" sx={{ py: 6 }}>
           <Stack spacing={0.5} sx={{ mb: 4 }}>
             <Typography

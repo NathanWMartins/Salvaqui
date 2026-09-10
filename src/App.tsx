@@ -1,10 +1,11 @@
-import type { ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { theme } from './theme/theme'
+import { getTheme } from './theme/theme'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { PWAInstallProvider } from './contexts/PWAInstallContext'
+import { ThemeModeProvider, useThemeMode } from './contexts/ThemeModeContext'
 import InstallFab from './components/InstallFab'
 import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
@@ -29,60 +30,73 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return children
 }
 
+// Monta o tema MUI a partir do modo escolhido (contexto) — precisa estar
+// dentro do ThemeModeProvider pra ler o modo atual.
+function ThemedApp() {
+  const { mode } = useThemeMode()
+  const theme = useMemo(() => getTheme(mode), [mode])
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <PWAInstallProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/signup" element={<SignupPage />} />
+              <Route path="/esqueci-senha" element={<ForgotPasswordPage />} />
+              <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
+              <Route path="/termos" element={<TermsPage />} />
+              <Route path="/privacidade" element={<PrivacyPage />} />
+              <Route
+                path="/inicio"
+                element={
+                  <RequireAuth>
+                    <HomePage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/item/:id"
+                element={
+                  <RequireAuth>
+                    <ItemDetailPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/conexao/:id"
+                element={
+                  <RequireAuth>
+                    <ConnectionPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/configuracoes"
+                element={
+                  <RequireAuth>
+                    <SettingsPage />
+                  </RequireAuth>
+                }
+              />
+            </Routes>
+            <InstallFab />
+          </BrowserRouter>
+        </PWAInstallProvider>
+      </AuthProvider>
+    </ThemeProvider>
+  )
+}
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <AuthProvider>
-          <PWAInstallProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
-                <Route path="/esqueci-senha" element={<ForgotPasswordPage />} />
-                <Route path="/redefinir-senha" element={<ResetPasswordPage />} />
-                <Route path="/termos" element={<TermsPage />} />
-                <Route path="/privacidade" element={<PrivacyPage />} />
-                <Route
-                  path="/inicio"
-                  element={
-                    <RequireAuth>
-                      <HomePage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/item/:id"
-                  element={
-                    <RequireAuth>
-                      <ItemDetailPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/conexao/:id"
-                  element={
-                    <RequireAuth>
-                      <ConnectionPage />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/configuracoes"
-                  element={
-                    <RequireAuth>
-                      <SettingsPage />
-                    </RequireAuth>
-                  }
-                />
-              </Routes>
-              <InstallFab />
-            </BrowserRouter>
-          </PWAInstallProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <ThemeModeProvider>
+        <ThemedApp />
+      </ThemeModeProvider>
     </QueryClientProvider>
   )
 }
