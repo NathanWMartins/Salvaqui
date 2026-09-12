@@ -10,8 +10,6 @@ type AuthLayoutProps = {
   mascotMessage: string
 }
 
-// Casca compartilhada por Login e Cadastro: painel esquerdo com a Sau
-// (mascote) dando as boas-vindas, painel direito com o formulário.
 export default function AuthLayout({ children, title, subtitle, mascotMessage }: AuthLayoutProps) {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex' }}>
@@ -45,7 +43,7 @@ export default function AuthLayout({ children, title, subtitle, mascotMessage }:
               py: 2,
               borderRadius: 3,
               bgcolor: 'rgba(255,255,255,0.97)',
-              color: 'text.primary',
+              color: 'black',
               maxWidth: 280,
             }}
           >

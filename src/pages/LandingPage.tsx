@@ -501,7 +501,7 @@ export default function LandingPage() {
                     label="4 conexões encontradas"
                     size="small"
                     color="primary"
-                    sx={{ fontWeight: 700, fontSize: '0.68rem', background: '#ff8146' }}
+                    sx={{ fontWeight: 700, fontSize: '0.68rem', background: '#ff8146', color: '#fff' }}
                   />
                 </Stack>
 
@@ -522,20 +522,20 @@ export default function LandingPage() {
                     <LocationOnOutlinedIcon sx={{ color: 'white', fontSize: 18 }} />
                   </Box>
                   <Stack spacing={0.4}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '0.95rem' }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '0.95rem', color: 'black' }}>
                       Parece que você está planejando uma viagem para Florianópolis! <br /> Vamos começar os planejamentos?
                     </Typography>
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.82rem' }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.82rem', color: 'black' }}>
                       Restaurante, hospedagem, transporte e passeio — tudo salvo nos últimos dias.
                     </Typography>
                   </Stack>
                 </Stack>
 
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ pt: 0.5 }}>
-                  <Button variant="contained" size="small" disableElevation sx={{ fontWeight: 700, background: '#ff8146' }}>
+                  <Button variant="contained" size="small" disableElevation sx={{ fontWeight: 700, background: '#ff8146', color: '#fff' }}>
                     Criar minha viagem
                   </Button>
-                  <Button variant="text" size="small" color="secondary">
+                  <Button variant="text" size="small" color="secondary" sx={{color: '#313131'}}>
                     Guardar para depois
                   </Button>
                 </Stack>
@@ -747,7 +747,7 @@ export default function LandingPage() {
         )}
         {!canInstall && !installed && (
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1.5 }}>
-            No iPhone: toque em Compartilhar e depois em "Adicionar à Tela de Início".
+            No iPhone: clique nos 3 pontinhos, toque em "Compartilhar", "Ver Mais" e depois em "Adicionar à Tela de Início".
           </Typography>
         )}
       </Container>

@@ -109,9 +109,9 @@ export default function HomePage() {
             </Typography>
 
             <TextField
-              placeholder="Buscar no que você salvou..."
+              placeholder="Buscar..."
               size="small"
-              sx={{ flex: 1, maxWidth: 420, display: { xs: 'none', sm: 'block' } }}
+              sx={{ flex: 1, maxWidth: 800}}
               slotProps={{
                 input: {
                   startAdornment: (
@@ -122,29 +122,30 @@ export default function HomePage() {
                 },
               }}
             />
+            <Box>
+              <ThemeToggleButton />
 
-            <ThemeToggleButton />
-
-            <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
-              <Avatar sx={{ width: 34, height: 34, bgcolor: 'primary.main', fontSize: '0.9rem' }}>
-                {firstName[0]?.toUpperCase()}
-              </Avatar>
-            </IconButton>
-            <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-              <MenuItem
-                onClick={() => {
-                  setAnchorEl(null)
-                  navigate('/configuracoes')
-                }}
-              >
-                <SettingsOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
-                Configurações
-              </MenuItem>
-              <MenuItem onClick={handleLogout}>
-                <LogoutOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
-                Sair
-              </MenuItem>
-            </Menu>
+              <IconButton onClick={(e) => setAnchorEl(e.currentTarget)}>
+                <Avatar sx={{ width: 34, height: 34, bgcolor: 'primary.main', fontSize: '0.9rem' }}>
+                  {firstName[0]?.toUpperCase()}
+                </Avatar>
+              </IconButton>
+              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+                <MenuItem
+                  onClick={() => {
+                    setAnchorEl(null)
+                    navigate('/configuracoes')
+                  }}
+                >
+                  <SettingsOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
+                  Configurações
+                </MenuItem>
+                <MenuItem onClick={handleLogout}>
+                  <LogoutOutlinedIcon fontSize="small" sx={{ mr: 1 }} />
+                  Sair
+                </MenuItem>
+              </Menu>
+            </Box>
           </Stack>
         </Container>
       </Box>

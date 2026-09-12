@@ -1,6 +1,7 @@
-import { useState, type FormEvent } from 'react'
+import { useState, type FormEvent, type ReactNode } from 'react'
 import {
   Alert,
+  Avatar,
   Box,
   Button,
   Chip,
@@ -8,18 +9,80 @@ import {
   Divider,
   Paper,
   Stack,
+  Switch,
   TextField,
   Typography,
 } from '@mui/material'
+import { alpha } from '@mui/material/styles'
 import { useNavigate } from 'react-router-dom'
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
+import AlternateEmailOutlinedIcon from '@mui/icons-material/AlternateEmailOutlined'
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
+import WorkspacePremiumOutlinedIcon from '@mui/icons-material/WorkspacePremiumOutlined'
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined'
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined'
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined'
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined'
+import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined'
 import DetailHeader from '../components/DetailHeader'
 import { useAuth } from '../contexts/AuthContext'
+import { useThemeMode } from '../contexts/ThemeModeContext'
 import { getDisplayName, logout, updateEmail, updateName, updatePassword } from '../lib/auth'
+
+// Card com cantos bem menos arredondados que o padrão do resto do app —
+// aqui a página é densa em conteúdo, então um raio de card menor deixa
+// as seções mais "arquivo" e menos "balão".
+const CARD_RADIUS = 2.5
+
+// Cabeçalho reaproveitado por cada seção: ícone com fundo colorido +
+// título + descrição curta, pra cada card ter identidade própria em vez
+// de só um Typography solto no topo.
+function SectionHeader({
+  icon,
+  title,
+  description,
+}: {
+  icon: ReactNode
+  title: string
+  description?: string
+}) {
+  return (
+    <Stack direction="row" spacing={1.5} sx={{ alignItems: 'flex-start' }}>
+      <Box
+        sx={{
+          width: 38,
+          height: 38,
+          borderRadius: 1.75,
+          flexShrink: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          bgcolor: (theme) => alpha(theme.palette.primary.main, 0.12),
+          color: 'primary.main',
+        }}
+      >
+        {icon}
+      </Box>
+      <Box>
+        <Typography variant="subtitle1" sx={{ fontWeight: 700, lineHeight: 1.3 }}>
+          {title}
+        </Typography>
+        {description && (
+          <Typography variant="body2" color="text.secondary">
+            {description}
+          </Typography>
+        )}
+      </Box>
+    </Stack>
+  )
+}
 
 export default function SettingsPage() {
   const navigate = useNavigate()
   const { session } = useAuth()
+  const { mode, toggleMode } = useThemeMode()
   const user = session?.user
 
   const [name, setName] = useState(getDisplayName(user) ?? '')
@@ -36,6 +99,8 @@ export default function SettingsPage() {
   const [passwordStatus, setPasswordStatus] = useState<string | null>(null)
   const [passwordError, setPasswordError] = useState<string | null>(null)
   const [passwordLoading, setPasswordLoading] = useState(false)
+
+  const displayName = getDisplayName(user)
 
   const handleUpdateName = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -103,13 +168,60 @@ export default function SettingsPage() {
       <DetailHeader title="Configurações da conta" backTo="/inicio" />
 
       <Container maxWidth="sm" sx={{ py: { xs: 3, md: 5 } }}>
-        <Stack spacing={4}>
-          {/* Perfil */}
-          <Paper elevation={0} variant="outlined" sx={{ borderRadius: 3, p: { xs: 2.5, md: 3 } }}>
-            <Stack component="form" spacing={2} onSubmit={handleUpdateName}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                Perfil
+        <Stack spacing={3}>
+          {/* Resumo do perfil */}
+          <Paper
+            elevation={0}
+            sx={{
+              borderRadius: CARD_RADIUS,
+              p: { xs: 2.5, md: 3 },
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              flexWrap: 'wrap',
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+            }}
+          >
+            <Avatar
+              sx={{
+                width: 56,
+                height: 56,
+                bgcolor: (theme) => alpha(theme.palette.common.white, 0.2),
+                color: 'inherit',
+                fontSize: '1.4rem',
+                fontWeight: 700,
+              }}
+            >
+              {displayName[0]?.toUpperCase()}
+            </Avatar>
+            <Box sx={{ flex: 1, minWidth: 180 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, lineHeight: 1.25 }}>
+                {displayName}
               </Typography>
+              <Typography variant="body2" sx={{ opacity: 0.85 }} noWrap>
+                {user?.email}
+              </Typography>
+            </Box>
+            <Chip
+              label="Plano Grátis"
+              size="small"
+              sx={{
+                fontWeight: 700,
+                bgcolor: (theme) => alpha(theme.palette.common.white, 0.18),
+                color: 'inherit',
+              }}
+            />
+          </Paper>
+
+          {/* Perfil */}
+          <Paper elevation={0} variant="outlined" sx={{ borderRadius: CARD_RADIUS, p: { xs: 2.5, md: 3 } }}>
+            <Stack component="form" spacing={2} onSubmit={handleUpdateName}>
+              <SectionHeader
+                icon={<PersonOutlineOutlinedIcon fontSize="small" />}
+                title="Nome de exibição"
+                description="Como a Sau vai te chamar pelo app."
+              />
               {nameStatus && (
                 <Alert severity={nameStatus === 'Nome atualizado.' ? 'success' : 'error'}>
                   {nameStatus}
@@ -129,11 +241,13 @@ export default function SettingsPage() {
           </Paper>
 
           {/* E-mail */}
-          <Paper elevation={0} variant="outlined" sx={{ borderRadius: 3, p: { xs: 2.5, md: 3 } }}>
+          <Paper elevation={0} variant="outlined" sx={{ borderRadius: CARD_RADIUS, p: { xs: 2.5, md: 3 } }}>
             <Stack component="form" spacing={2} onSubmit={handleUpdateEmail}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                E-mail
-              </Typography>
+              <SectionHeader
+                icon={<AlternateEmailOutlinedIcon fontSize="small" />}
+                title="E-mail de acesso"
+                description="Usado pra login e pras notificações da conta."
+              />
               {emailError && <Alert severity="error">{emailError}</Alert>}
               {emailStatus && <Alert severity="success">{emailStatus}</Alert>}
               <TextField
@@ -151,11 +265,12 @@ export default function SettingsPage() {
           </Paper>
 
           {/* Senha */}
-          <Paper elevation={0} variant="outlined" sx={{ borderRadius: 3, p: { xs: 2.5, md: 3 } }}>
+          <Paper elevation={0} variant="outlined" sx={{ borderRadius: CARD_RADIUS, p: { xs: 2.5, md: 3 } }}>
             <Stack component="form" spacing={2} onSubmit={handleUpdatePassword}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                Senha
-              </Typography>
+              <SectionHeader
+                icon={<LockOutlinedIcon fontSize="small" />}
+                title="Senha"
+              />
               {passwordError && <Alert severity="error">{passwordError}</Alert>}
               {passwordStatus && <Alert severity="success">{passwordStatus}</Alert>}
               <TextField
@@ -183,25 +298,88 @@ export default function SettingsPage() {
             </Stack>
           </Paper>
 
-          {/* Plano */}
-          <Paper elevation={0} variant="outlined" sx={{ borderRadius: 3, p: { xs: 2.5, md: 3 } }}>
+          {/* Preferências */}
+          <Paper elevation={0} variant="outlined" sx={{ borderRadius: CARD_RADIUS, p: { xs: 2.5, md: 3 } }}>
             <Stack spacing={2}>
-              <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                Plano
-              </Typography>
+              <SectionHeader
+                icon={<TuneOutlinedIcon fontSize="small" />}
+                title="Preferências"
+                description="Ajustes de exibição do app."
+              />
+              <Stack
+                direction="row"
+                sx={{ alignItems: 'center', justifyContent: 'space-between', gap: 2 }}
+              >
+                <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+                  {mode === 'dark' ? (
+                    <DarkModeOutlinedIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                  ) : (
+                    <LightModeOutlinedIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+                  )}
+                  <Box>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      Modo escuro
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {mode === 'dark' ? 'Ativado' : 'Desativado'}
+                    </Typography>
+                  </Box>
+                </Stack>
+                <Switch checked={mode === 'dark'} onChange={toggleMode} inputProps={{ 'aria-label': 'Alternar modo escuro' }} />
+              </Stack>
+            </Stack>
+          </Paper>
+
+          {/* Plano */}
+          <Paper
+            elevation={0}
+            sx={{
+              borderRadius: CARD_RADIUS,
+              p: { xs: 2.5, md: 3 },
+              border: '1px solid',
+              borderColor: (theme) => alpha(theme.palette.primary.main, 0.35),
+              bgcolor: (theme) => alpha(theme.palette.primary.main, 0.06),
+            }}
+          >
+            <Stack spacing={2}>
+              <SectionHeader
+                icon={<WorkspacePremiumOutlinedIcon fontSize="small" />}
+                title="Seu plano"
+                description="Veja o que está incluso e o que muda no Pro."
+              />
+
               <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', flexWrap: 'wrap' }}>
                 <Chip
                   icon={<CheckCircleOutlineOutlinedIcon />}
                   label="Grátis"
-                  color="default"
-                  sx={{ fontWeight: 700 }}
+                  sx={{ fontWeight: 700, bgcolor: 'background.paper' }}
                 />
                 <Typography variant="body2" color="text.secondary">
-                  Salvamento ilimitado, até 3 contextos, detecção essencial.
+                  Você está no plano atual.
                 </Typography>
               </Stack>
+
+              <Stack spacing={0.75}>
+                {['Salvamento ilimitado', 'Até 3 contextos ativos', 'Detecção essencial de conexões'].map((perk) => (
+                  <Stack key={perk} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                    <CheckCircleOutlineOutlinedIcon sx={{ fontSize: 16, color: 'primary.main' }} />
+                    <Typography variant="body2">{perk}</Typography>
+                  </Stack>
+                ))}
+              </Stack>
+
+              <Divider sx={{ borderColor: (theme) => alpha(theme.palette.primary.main, 0.2) }} />
+
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                <AutoAwesomeOutlinedIcon sx={{ fontSize: 18, color: 'primary.main' }} />
+                <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                  No Pro: contextos ilimitados, detecção avançada por IA e mais.
+                </Typography>
+              </Stack>
+
               <Button
-                variant="outlined"
+                variant="contained"
+                disableElevation
                 sx={{ alignSelf: 'flex-start' }}
                 onClick={() => navigate('/#precos')}
               >
@@ -210,17 +388,31 @@ export default function SettingsPage() {
             </Stack>
           </Paper>
 
-          <Divider />
-
           {/* Sessão */}
-          <Stack spacing={1.5} sx={{ alignItems: 'flex-start' }}>
-            <Button variant="text" color="secondary" onClick={handleLogout}>
-              Sair da conta
-            </Button>
-            <Button variant="text" color="error" disabled title="Em breve — exclusão de conta ainda não está implementada">
-              Excluir conta
-            </Button>
-          </Stack>
+          <Paper elevation={0} variant="outlined" sx={{ borderRadius: CARD_RADIUS, p: { xs: 2.5, md: 3 } }}>
+            <Stack spacing={1.5}>
+              <Button
+                variant="text"
+                color="secondary"
+                startIcon={<LogoutOutlinedIcon />}
+                onClick={handleLogout}
+                sx={{ alignSelf: 'flex-start' }}
+              >
+                Sair da conta
+              </Button>
+              <Divider />
+              <Button
+                variant="text"
+                color="error"
+                startIcon={<DeleteOutlineOutlinedIcon />}
+                disabled
+                title="Em breve — exclusão de conta ainda não está implementada"
+                sx={{ alignSelf: 'flex-start' }}
+              >
+                Excluir conta
+              </Button>
+            </Stack>
+          </Paper>
         </Stack>
       </Container>
     </Box>
