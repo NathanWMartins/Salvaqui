@@ -325,7 +325,15 @@ export default function SettingsPage() {
                     </Typography>
                   </Box>
                 </Stack>
-                <Switch checked={mode === 'dark'} onChange={toggleMode} inputProps={{ 'aria-label': 'Alternar modo escuro' }} />
+                <Switch
+                  checked={mode === 'dark'}
+                  onChange={toggleMode}
+                  slotProps={{
+                    input: {
+                      'aria-label': 'Alternar modo escuro',
+                    },
+                  }}
+                />
               </Stack>
             </Stack>
           </Paper>
